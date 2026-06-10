@@ -4,48 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Détect'Map Premium</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Chargement sécurisé de Leaflet -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
     
     <style>
-        /* Design Global Minimaliste - Dark Mode */
-        body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background: #121212; color: #E0E0E0; overflow: hidden; }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: #121212; color: #E0E0E0; overflow: hidden; }
         #map { height: 72%; width: 100%; background: #1a1a1a; }
         
-        /* Structure des bandeaux de commande */
         .panel { height: 9%; width: 100%; display: flex; background: #121212; box-sizing: border-box; padding: 4px; gap: 6px; }
         .panel-bottom { height: 10%; background: #121212; border-top: 1px solid #2d2d2d; }
         
-        /* Boutons Flat de Style Professionnel */
         .btn { flex: 1; border: none; border-radius: 8px; font-weight: 600; font-size: 14px; letter-spacing: 0.5px; color: #ffffff; background: #1e1e1e; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; transition: background 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         .btn svg { width: 22px; height: 22px; fill: currentColor; }
         
-        /* Liste déroulante stylisée */
         .file-select { flex: 1.4; border-radius: 8px; background: #1e1e1e; color: #ffffff; font-size: 14px; font-weight: 600; padding: 0 10px; border: none; outline: none; box-shadow: 0 2px 4px rgba(0,0,0,0.2); -webkit-appearance: none; text-align-last: center; }
         
-        /* Variantes de couleur Bichrome / Minimaliste */
         .btn-accent-blue { background: #0055ff; color: #ffffff; }
         .btn-accent-orange { background: #ff6600; color: #ffffff; }
         .btn-accent-green { background: #00b050; color: #ffffff; }
         .btn-accent-red { background: #cc0000; color: #ffffff; }
         .btn-border { border: 1px solid #333333; background: #121212; }
         
-        /* Boutons de zoom flottants épurés */
         .zoom-controls { position: absolute; right: 16px; top: 22%; display: flex; flex-direction: column; gap: 12px; z-index: 1000; }
         .btn-zoom { width: 56px; height: 56px; background: #1e1e1e; border: 1px solid #333333; color: #ffffff; font-size: 28px; border-radius: 50%; font-weight: 300; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.4); }
         
-        /* Écrans de saisie (Modals) au design sobre */
         .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(10,10,10,0.95); padding: 20px; box-sizing: border-box; }
         .modal-content { background: #1e1e1e; border: 1px solid #333333; border-radius: 16px; height: 100%; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; }
         .modal-title { color: #ffffff; font-size: 20px; text-align: center; font-weight: 500; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
         .grid-options { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; flex-grow: 1; }
-        
-        /* Input de texte haut de gamme */
         .giant-input { width: 100%; padding: 16px; font-size: 20px; border-radius: 8px; border: 1px solid #333333; background: #121212; color: #ffffff; box-sizing: border-box; margin-bottom: 24px; text-align: center; }
     </style>
 </head>
 <body>
 
+    <!-- BANDEAU 1 : SOUVERAINETÉ & HISTORIQUE -->
     <div class="panel" style="height: 8%;">
         <select id="select-sorties" class="file-select" onchange="chargerSortieSelectionnee()">
             <option value="">HISTORIQUE DES SORTIES</option>
@@ -59,14 +52,17 @@
         <input type="file" id="input-import" style="display:none;" accept=".json" onchange="importerFichierSortie(event)">
     </div>
 
+    <!-- ZONE DE CARTE -->
     <div id="map"></div>
 
+    <!-- ZOOMS XXL MINIMALISTES -->
     <div class="zoom-controls">
         <button class="btn-zoom" onclick="map.zoomIn()">+</button>
         <button class="btn-zoom" onclick="map.zoomOut()">-</button>
         <button class="btn-zoom" onclick="centrerSurMoi()" style="background: #ffffff; color: #121212; border: none;">🎯</button>
     </div>
 
+    <!-- BANDEAU 2 : MARQUEURS STRATÉGIQUES -->
     <div class="panel">
         <button id="btn-park" class="btn" onclick="marquerParking()">
             <svg viewBox="0 0 24 24"><path d="M18.92 11.01C18.72 10.42 18.16 10 17.5 10H6.5c-.66 0-1.22.42-1.42 1.01L3 17v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 12h10.29l1.04 3H5.81l1.04-3zM19 21H5v-4h14v4z"/></svg>VÉHICULE
@@ -79,6 +75,7 @@
         </button>
     </div>
 
+    <!-- BANDEAU 3 : RECHERCHE TERRAIN PRINCIPALE -->
     <div class="panel panel-bottom">
         <button id="btn-track" class="btn btn-accent-blue" onclick="toggleTracking()">
             <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 12 10 10-4.48 10-12S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>PROSPECTION
@@ -88,6 +85,7 @@
         </button>
     </div>
 
+    <!-- ENREGISTREMENT SANS CLAVIER (MODERN FLAT) -->
     <div id="trouvaille-modal" class="modal">
         <div class="modal-content">
             <div id="modal-step-title" class="modal-title">Nature du signal</div>
@@ -96,6 +94,7 @@
         </div>
     </div>
 
+    <!-- NOMMAGE DE FIN -->
     <div id="nom-modal" class="modal">
         <div class="modal-content" style="height: auto; top: 25%;">
             <div class="modal-title">Enregistrer la session</div>
@@ -114,26 +113,31 @@
         let sessionActuelle = { nom: "Sortie Active", parcours: [], trouvailles: [], zones: [], parking: null };
         let indexSorties = JSON.parse(localStorage.getItem('detectMapIndex')) || {};
 
+        // Serveurs ultra-sécurisés HTTPS et validés iOS/Safari
         const fondsDeCarte = [
-            Leaflet.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Esri' }),
-            Leaflet.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { attribution: 'Topo' }),
-            Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: 'OSM' })
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: 'OSM Standard' }),
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Esri Sat' }),
+            L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { attribution: 'Topo' })
         ];
 
-        let layerGroupCourant = Leaflet.layerGroup();
+        let layerGroupCourant = L.layerGroup();
 
         window.onload = function() {
-            map = Leaflet.map('map', { zoomControl: false }).setView([46.2276, 2.2137], 6);
+            // Forcer l'affichage immédiat sur la France [Latitude, Longitude] au lieu d'attendre le GPS
+            map = L.map('map', { zoomControl: false }).setView([46.2276, 2.2137], 6);
             fondsDeCarte[0].addTo(map);
             layerGroupCourant.addTo(map);
             actualiserListeDeroulante();
             
+            // Demande de géolocalisation en tâche de fond
             if(navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(position => {
                     const pos = [position.coords.latitude, position.coords.longitude];
                     map.setView(pos, 16);
-                    userMarker = Leaflet.circleMarker(pos, { radius: 8, color: '#0055ff', fillColor: '#fff', fillOpacity: 1, weight: 3 }).addTo(map);
-                });
+                    userMarker = L.circleMarker(pos, { radius: 8, color: '#0055ff', fillColor: '#fff', fillOpacity: 1, weight: 3 }).addTo(map);
+                }, () => {
+                    alert("Pour afficher votre position exacte dans les champs, activez le GPS dans les réglages Safari de votre iPhone.");
+                }, { enableHighAccuracy: true });
             }
         };
 
@@ -160,8 +164,7 @@
                 sessionActuelle = { nom: "", parcours: [], trouvailles: [], zones: [], parking: sessionActuelle.parking };
                 layerGroupCourant.clearLayers();
                 
-                // Tracé Moderne Monochrome : Ligne blanche pure, nette et épaisse
-                currentPolyline = Leaflet.polyline([], {color: '#ffffff', weight: 6, opacity: 0.85}).addTo(layerGroupCourant);
+                currentPolyline = L.polyline([], {color: '#ffffff', weight: 5, opacity: 0.9}).addTo(layerGroupCourant);
                 
                 watchId = navigator.geolocation.watchPosition(pos => {
                     const coords = [pos.coords.latitude, pos.coords.longitude];
@@ -197,8 +200,7 @@
                 const coords = [pos.coords.latitude, pos.coords.longitude];
                 sessionActuelle.parking = coords;
                 if(parkingMarker) layerGroupCourant.removeLayer(parkingMarker);
-                // Marqueur Voiture Bichrome Minimaliste
-                parkingMarker = Leaflet.circleMarker(coords, { radius: 12, color: '#0055ff', fillColor: '#121212', weight: 4, fillOpacity: 1 }).addTo(layerGroupCourant).bindPopup('<b style="color:#000;">🚗 VÉHICULE STATIONNÉ</b>');
+                parkingMarker = L.circleMarker(coords, { radius: 10, color: '#0055ff', fillColor: '#121212', weight: 4, fillOpacity: 1 }).addTo(layerGroupCourant).bindPopup('<b>🚗 VÉHICULE</b>');
             });
         }
 
@@ -206,8 +208,7 @@
             navigator.geolocation.getCurrentPosition(pos => {
                 const coords = [pos.coords.latitude, pos.coords.longitude];
                 sessionActuelle.zones.push(coords);
-                // Cercle d'intérêt sobre ambré
-                Leaflet.circle(coords, { radius: 25, color: '#ff6600', weight: 2, fillColor: '#ff6600', fillOpacity: 0.15 }).addTo(layerGroupCourant);
+                L.circle(coords, { radius: 25, color: '#ff6600', weight: 2, fillColor: '#ff6600', fillOpacity: 0.15 }).addTo(layerGroupCourant);
             });
         }
 
@@ -263,10 +264,8 @@
         function finaliserTrouvaille() {
             sessionActuelle.trouvailles.push(trouvailleEnCours);
             let label = `${trouvailleEnCours.type} - ${trouvailleEnCours.epoque || 'N/A'}`;
-            
-            // Marqueur cible : Design cible plat (bichrome orange et noir)
-            Leaflet.circleMarker(trouvailleEnCours.coords, {radius: 9, color: '#ff6600', fillColor: '#121212', weight: 4, fillOpacity: 1})
-                .addTo(layerGroupCourant).bindPopup(`<b style="color:#000; font-size:14px;">${label}</b>`);
+            L.circleMarker(trouvailleEnCours.coords, {radius: 9, color: '#ff6600', fillColor: '#121212', weight: 4, fillOpacity: 1})
+                .addTo(layerGroupCourant).bindPopup(`<b style="font-size:14px;">${label}</b>`);
             fermerModal();
         }
 
@@ -289,18 +288,18 @@
             layerGroupCourant.clearLayers();
             
             if(sessionActuelle.parcours.length > 0) {
-                Leaflet.polyline(sessionActuelle.parcours, {color: '#ffffff', weight: 5, opacity: 0.7}).addTo(layerGroupCourant);
+                L.polyline(sessionActuelle.parcours, {color: '#ffffff', weight: 5, opacity: 0.7}).addTo(layerGroupCourant);
                 map.setView(sessionActuelle.parcours[0], 16);
             }
             if(sessionActuelle.parking) {
-                parkingMarker = Leaflet.circleMarker(sessionActuelle.parking, { radius: 12, color: '#0055ff', fillColor: '#121212', weight: 4, fillOpacity: 1 }).addTo(layerGroupCourant);
+                parkingMarker = L.circleMarker(sessionActuelle.parking, { radius: 10, color: '#0055ff', fillColor: '#121212', weight: 4, fillOpacity: 1 }).addTo(layerGroupCourant);
             }
             sessionActuelle.zones.forEach(coords => {
-                Leaflet.circle(coords, { radius: 25, color: '#ff6600', weight: 2, fillColor: '#ff6600', fillOpacity: 0.15 }).addTo(layerGroupCourant);
+                L.circle(coords, { radius: 25, color: '#ff6600', weight: 2, fillColor: '#ff6600', fillOpacity: 0.15 }).addTo(layerGroupCourant);
             });
             sessionActuelle.trouvailles.forEach(t => {
-                Leaflet.circleMarker(t.coords, {radius: 9, color: '#ff6600', fillColor: '#121212', weight: 4, fillOpacity: 1})
-                    .addTo(layerGroupCourant).bindPopup(`<b style="color:#000;">${t.type}<br>${t.epoque}</b>`);
+                L.circleMarker(t.coords, {radius: 9, color: '#ff6600', fillColor: '#121212', weight: 4, fillOpacity: 1})
+                    .addTo(layerGroupCourant).bindPopup(`<b>${t.type}<br>${t.epoque}</b>`);
             });
         }
 
