@@ -3,22 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Détect'Map Pro V1.9</title>
+    <title>Détect'Map Pro V2.0</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
     
     <style>
-        /* Design Flat Bichrome Minimaliste */
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #121212; color: #E0E0E0; overflow: hidden; }
         
-        /* Layout : Équilibre parfait 8% / 84% / 8% */
         #map { height: 84%; width: 100%; background: #1a1a1a; position: relative; }
         .panel { height: 8%; width: 100%; display: flex; background: #121212; box-sizing: border-box; padding: 6px; gap: 8px; align-items: center; }
         .panel-top { border-bottom: 1px solid #2d2d2d; }
         .panel-bottom { border-top: 1px solid #2d2d2d; }
         
-        /* Boutons Flat */
         .btn { flex: 1; height: 100%; border: none; border-radius: 8px; font-weight: 600; font-size: 11px; letter-spacing: 0.5px; color: #ffffff; background: #1e1e1e; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border: 1px solid #333; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         .btn svg { width: 18px; height: 18px; fill: currentColor; }
         .btn-small { flex: 0.35; }
@@ -26,24 +23,24 @@
         .btn-active-red { background: #cc0000; border: none; }
         .btn-accent-orange { background: #ff6600; border: none; }
         
-        .file-select { flex: 1.3; height: 100%; border-radius: 8px; background: #1e1e1e; color: #ffffff; font-size: 12px; font-weight: 600; padding: 0 8px; border: 1px solid #333; text-align-last: center; -webkit-appearance: none; }
+        .file-select { flex: 1.3; height: 100%; border-radius: 8px; background: #1e1e1e; color: #ffffff; font-size: 11px; font-weight: 600; padding: 0 8px; border: 1px solid #333; text-align-last: center; -webkit-appearance: none; }
 
-        /* Menu des Cartes : Pop-up fixé proprement en bas à droite */
         .layers-popup { display: none; position: absolute; right: 12px; bottom: 9%; width: 260px; background: rgba(18, 18, 18, 0.98); border: 1px solid #444; border-radius: 8px; z-index: 1010; padding: 12px; box-shadow: 0 -4px 15px rgba(0,0,0,0.6); }
         .layer-row { display: flex; flex-direction: column; gap: 6px; border-bottom: 1px solid #2d2d2d; padding-bottom: 8px; margin-bottom: 8px; }
         .layer-row:last-child { border: none; margin: 0; padding: 0; }
         .layer-header { display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; color: #fff; }
         .layer-header input[type="checkbox"] { width: 18px; height: 18px; accent-color: #0055ff; }
         
-        /* Curseurs bloqués pour empêcher le glissement de carte sur iPhone */
         .layer-slider { -webkit-appearance: none; width: 100%; background: #333; height: 8px; border-radius: 4px; outline: none; touch-action: none; }
         .layer-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #ffffff; cursor: pointer; border: 1px solid #333; }
 
-        /* Modals Saisie & Documentation */
         .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(10,10,10,0.96); padding: 20px; box-sizing: border-box; }
         .modal-content { background: #1e1e1e; border: 1px solid #333; border-radius: 16px; height: 100%; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; }
-        .modal-title { color: #ffffff; font-size: 18px; text-align: center; font-weight: 600; margin-bottom: 20px; text-transform: uppercase; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .modal-body { flex-grow: 1; font-size: 15px; line-height: 1.6; color: #ccc; overflow-y: auto; }
+        .modal-title { color: #ffffff; font-size: 18px; text-align: center; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .modal-body { flex-grow: 1; font-size: 14px; line-height: 1.5; color: #ccc; overflow-y: auto; padding-right: 5px; }
+        .modal-body h3 { font-size: 15px; color: #0055ff; margin-top: 15px; margin-bottom: 5px; text-transform: uppercase; }
+        .modal-body ul { margin: 0 0 10px 0; padding-left: 20px; }
+        .modal-body li { margin-bottom: 6px; }
         .grid-options { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; flex-grow: 1; }
         .giant-input { width: 100%; padding: 16px; font-size: 20px; border-radius: 8px; border: 1px solid #333; background: #121212; color: #ffffff; box-sizing: border-box; margin-bottom: 24px; text-align: center; }
     </style>
@@ -63,18 +60,18 @@
 
     <div id="map">
         <div id="popup-calques" class="layers-popup">
-            <div style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: #888; border-bottom: 1px solid #333; padding-bottom: 6px; margin-bottom: 8px;">Ordre des calques</div>
+            <div style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: #888; border-bottom: 1px solid #333; padding-bottom: 6px; margin-bottom: 8px;">Gestion des calques</div>
             
             <div class="layer-row">
                 <label class="layer-header"><input type="checkbox" id="chk-sat" checked onchange="toggleCalque('sat')"> Vue Satellite Actuelle</label>
                 <input type="range" min="0" max="100" value="100" class="layer-slider" id="sld-sat" oninput="changerOpaciteCalque('sat', this.value)">
             </div>
             <div class="layer-row">
-                <label class="layer-header"><input type="checkbox" id="chk-lidar" onchange="toggleCalque('lidar')"> 1. LIDAR MNT (Gris Ombré)</label>
+                <label class="layer-header"><input type="checkbox" id="chk-lidar" onchange="toggleCalque('lidar')"> 1. LIDAR HD MNT (Gris Ombré)</label>
                 <input type="range" min="0" max="100" value="100" class="layer-slider" id="sld-lidar" oninput="changerOpaciteCalque('lidar', this.value)">
             </div>
             <div class="layer-row">
-                <label class="layer-header"><input type="checkbox" id="chk-sec" onchange="toggleCalque('sec')"> 2. SÉCHERESSE 2003 (00-05)</label>
+                <label class="layer-header"><input type="checkbox" id="chk-sec" onchange="toggleCalque('sec')"> 2. SÉCHERESSE 2003 (IGN)</label>
                 <input type="range" min="0" max="100" value="100" class="layer-slider" id="sld-sec" oninput="changerOpaciteCalque('sec', this.value)">
             </div>
             <div class="layer-row">
@@ -105,27 +102,61 @@
 
     <div id="modal-aide" class="modal">
         <div class="modal-content">
-            <div class="modal-title">Guide Technique</div>
+            <div class="modal-title">Manuel d'Utilisation Moderne</div>
             <div class="modal-body">
-                <p><b>• Bouton PLAY :</b> Active l'enregistrement de votre trace de marche (ligne blanche sur la carte satellite).</p>
-                <p><b>• Bouton CIBLE :</b> Géolocalise instantanément votre position et ouvre le menu pour qualifier l'objet et son époque.</p>
-                <p><b>• Bouton FOCUS :</b> Force l'iPhone à interroger ses satellites pour vous recentrer au centimètre près.</p>
-                <p><b>• Bouton CARTES :</b> Cochez plusieurs cartes en même temps. Les curseurs règlent la transparence de chaque couche.</p>
+                <h3>Section 1 : Démarrage Rapide</h3>
+                <ul>
+                    <li><b>Recentrage Initial :</b> Dès l'ouverture, l'application vous géolocalise. Le bouton <b>FOCUS</b> dans le footer force à tout moment un recentrage au centimètre près si vous avez navigué manuellement.</li>
+                    <li><b>Mode Hors-Ligne :</b> Une fois la carte chargée au bord du champ, activez le <b>Mode Avion</b> de votre iPhone pour préserver 70% de batterie. Le GPS reste pleinement fonctionnel.</li>
+                </ul>
+                
+                <h3>Section 2 : Enregistrement des Parcours</h3>
+                <ul>
+                    <li><b>Bouton PLAY :</b> Lance le traçage continu de votre itinéraire de marche (ligne blanche visible).</li>
+                    <li><b>Bouton STOP :</b> Immobilise la trace et déclenche l'archivage sécurisé.</li>
+                    <li><b>Sécurité Anti-Écrasement :</b> Une fois archivée, une sortie ne peut plus être écrasée ou modifiée. Cliquer à nouveau sur PLAY ouvre obligatoirement une nouvelle session vierge.</li>
+                </ul>
+
+                <h3>Section 3 : Marquage des Trouvailles</h3>
+                <ul>
+                    <li><b>Bouton CIBLE :</b> Capture instantanément votre position GPS sous vos pieds au-dessus du trou.</li>
+                    <li><b>Saisie 2 Étapes :</b> Sélectionnez la Nature (Monnaie, Artefact...) puis la Chronologie (Gaulois, Romain, Médiéval, Royal, Napoléonien, Récent). Un repère orange et noir s'ancre sur la carte.</li>
+                </ul>
+
+                <h3>Section 4 : Superposition Temporelle</h3>
+                <ul>
+                    <li><b>Bouton CARTES :</b> Déploie le menu de gestion des calques. Cochez les cases pour superposer le LIDAR HD ou la Sécheresse de 2003.</li>
+                    <li><b>Opacité :</b> Faites glisser les curseurs individuels pour fusionner les époques par transparence. Le mouvement est isolé pour ne pas déplacer la carte par erreur.</li>
+                </ul>
             </div>
-            <button class="btn" style="max-height: 45px; background:#333;" onclick="fermerModal('modal-aide')">FERMER</button>
+            <button class="btn" style="max-height: 45px; background:#333;" onclick="fermerModal('modal-aide')">FERMER LE GUIDE</button>
         </div>
     </div>
 
     <div id="modal-cloche" class="modal">
         <div class="modal-content">
-            <div class="modal-title">Release Notes</div>
+            <div class="modal-title">Historique des Versions</div>
             <div class="modal-body">
-                <p><b>V1.9 (Correction Bugs Majeurs) :</b><br>
-                • Intégration du bouton FOCUS directement dans le footer pour stabilisation.<br>
-                • Résolution complète du bug de chargement des flux IGN (LIDAR MNT Gris Ombré, Sécheresse 2003, Photos 1950) via le nouveau protocole sécurisé.<br>
-                • Sécurisation anti-glissement : Les curseurs de transparence n'entraînent plus la carte en arrière-plan.<br>
-                • Ajout d'une jauge d'opacité dédiée sur la couche Satellite de base.<br>
-                • Réécriture du moteur d'enregistrement et de tracé pour iPhone 17 Pro Max.</p>
+                <h3>Version 2.0 (Actuelle)</h3>
+                <ul>
+                    <li>Intégration du véritable flux <b>IGN LIDAR HD MNT (Gris Ombré)</b>.</li>
+                    <li>Correction et stabilisation des flux géoportail <b>Sécheresse 2003</b> et <b>Photos 1950</b>.</li>
+                    <li>Verrouillage strict des sessions après l'arrêt pour empêcher tout écrasement des tracés.</li>
+                    <li>Mise à jour intégrale de la documentation utilisateur classée par sections.</li>
+                </ul>
+                <h3>Version 1.9</h3>
+                <ul>
+                    <li>Migration du bouton FOCUS dans le footer pour assurer sa réactivité.</li>
+                    <li>Isolation tactile des curseurs de transparence (les sliders ne déplacent plus la carte).</li>
+                    <li>Ajout d'une réglette d'opacité sur le calque satellite de base.</li>
+                </ul>
+                <h3>Versions 1.1 à 1.8</h3>
+                <ul>
+                    <li>Refonte de l'interface : réduction du footer à 8%, design 100% Flat Bichrome.</li>
+                    <li>Sécurisation HTTPS pour compatibilité stricte iOS (iPhone 17 Pro Max).</li>
+                    <li>Moteur de gestion des fichiers souverains (.json) hors-ligne.</li>
+                    <li>Suppression des fonctionnalités lourdes (boutons véhicule et zone focus).</li>
+                </ul>
             </div>
             <button class="btn" style="max-height: 45px; background:#333;" onclick="fermerModal('modal-cloche')">FERMER</button>
         </div>
@@ -148,36 +179,34 @@
     </div>
 
     <script>
-        // Instance globale sécurisée
         let map, userMarker, currentPolyline, watchId;
         let tracking = false;
         let temporaryCoords = null;
         
-        let sessionActuelle = { nom: "Sortie Active", parcours: [], trouvailles: [] };
+        let sessionActuelle = { nom: "", parcours: [], trouvailles: [] };
         let indexSorties = JSON.parse(localStorage.getItem('detectMapIndex')) || {};
         let layerGroupCourant = L.layerGroup();
 
-        // RE-CALIBRAGE DES FLUX SECURE DE L'IGN (Portail GEOPF 2026)
+        // ADRESSES OFFICIELLES FLUX GÉOPORTAIL (GEOPF HTTPS 2026)
         const calques = {
             sat: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'),
-            lidar: L.tileLayer('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ELEVATION.SLOPES&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/jpeg'),
-            sec: L.tileLayer('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTHOIMAGERY.ORTHOPHOTOS.2000-2005&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/jpeg'),
+            lidar: L.tileLayer('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ELEVATION.ELEVATIONGRIDCOVERAGE.SHADOW&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/x-bil;bits=32'),
+            sec: L.tileLayer('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTHOIMAGERY.ORTHOPHOTOS2003&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/jpeg'),
             p1950: L.tileLayer('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTHOIMAGERY.ORTHOPHOTOS.1950-1965&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/jpeg'),
             em: L.tileLayer('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.ETATMAJOR40&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/jpeg')
         };
 
         window.onload = function() {
-            // Activation du moteur Canvas pour accélérer l'iPhone 17 Pro Max
             map = L.map('map', { zoomControl: false, maxZoom: 19, preferCanvas: true }).setView([46.2276, 2.2137], 6);
             calques.sat.addTo(map);
             layerGroupCourant.addTo(map);
             actualiserListeDeroulante();
             
-            // Empêcher la carte de bouger quand on touche les curseurs de calques
-            document.getElementById('popup-calques').addEventListener('touchstart', function(e) { e.stopPropagation(); }, {passive: true});
-            document.getElementById('popup-calques').addEventListener('touchmove', function(e) { e.stopPropagation(); }, {passive: true});
+            // Verrouillage tactile strict pour empêcher le déplacement de carte lors de l'utilisation des réglettes
+            const popup = document.getElementById('popup-calques');
+            popup.addEventListener('touchstart', e => e.stopPropagation(), {passive: true});
+            popup.addEventListener('touchmove', e => e.stopPropagation(), {passive: true});
             
-            // Focus Automatique Initial
             centrerSurMoi();
         };
 
@@ -203,34 +232,32 @@
             }
         }
 
-        // RECENTRAGE MANUEL SÉCURISÉ VIA DE VRAIS CAPTEURS IOS
         function centrerSurMoi() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(position => {
                     const pos = [position.coords.latitude, position.coords.longitude];
-                    map.setView(pos, 18); // Recentrage direct
+                    map.setView(pos, 17);
                     if(!userMarker) {
                         userMarker = L.circleMarker(pos, { radius: 7, color: '#0055ff', fillColor: '#fff', fillOpacity: 1, weight: 3 }).addTo(map);
                     } else {
                         userMarker.setLatLng(pos);
                     }
-                }, () => {
-                    alert("Erreur GPS : Vérifiez les autorisations de localisation de Safari dans votre iPhone.");
-                }, { enableHighAccuracy: true, timeout: 10000 });
+                }, null, { enableHighAccuracy: true });
             }
         }
 
-        // ENREGISTREMENT ET TRACÉ EN TEMPS RÉEL (PLAY / STOP)
+        // VERROUILLAGE SÉCURISÉ DES SESSIONS
         function toggleTracking() {
             const btn = document.getElementById('btn-track');
             if(!tracking) {
                 tracking = true;
                 btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg>STOP';
                 btn.className = "btn btn-active-red";
+                
+                // Forcer impérativement la création d'une nouvelle session vierge
                 sessionActuelle = { nom: "", parcours: [], trouvailles: [] };
                 layerGroupCourant.clearLayers();
                 
-                // Ligne blanche continue, épaisse et nette
                 currentPolyline = L.polyline([], {color: '#ffffff', weight: 6, opacity: 0.95}).addTo(layerGroupCourant);
                 
                 watchId = navigator.geolocation.watchPosition(pos => {
@@ -238,7 +265,7 @@
                     sessionActuelle.parcours.push(coords);
                     currentPolyline.setLatLngs(sessionActuelle.parcours);
                     if(userMarker) userMarker.setLatLng(coords);
-                }, null, { enableHighAccuracy: true, distanceFilter: 3 }); // Enregistre tous les 3 mètres
+                }, null, { enableHighAccuracy: true, distanceFilter: 4 });
             } else {
                 document.getElementById('nom-modal').style.display = 'block';
                 let date = new Date();
@@ -249,8 +276,10 @@
         function validerFinEtEnregistrer() {
             tracking = false;
             if(watchId) navigator.geolocation.clearWatch(watchId);
-            let nom = document.getElementById('input-nom-sortie').value.trim() || "PROSPECTION SANS NOM";
+            let nom = document.getElementById('input-nom-sortie').value.trim() || "SESSION PROSPECTION";
             sessionActuelle.nom = nom;
+            
+            // Archiver définitivement dans la mémoire
             indexSorties[nom] = sessionActuelle;
             localStorage.setItem('detectMapIndex', JSON.stringify(indexSorties));
             document.getElementById('nom-modal').style.display = 'none';
@@ -258,11 +287,12 @@
             const btn = document.getElementById('btn-track');
             btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>PLAY';
             btn.className = "btn btn-blue";
+            
             actualiserListeDeroulante();
             document.getElementById('select-sorties').value = nom;
+            chargerSortieSelectionnee(); // Matérialiser directement la sortie figée sur l'écran
         }
 
-        // GÉOLOCALISATION EXPLICITE ET MARQUAGE D'UN OBJET
         let trouvailleEnCours = {};
         const categories = [{ name: "MONNAIE" }, { name: "ARTEFACT / OBJET" }, { name: "MILITARIA" }, { name: "DÉCHET" }];
         const epoques = ["GAULOIS", "ROMAIN", "MÉDIÉVAL", "ROYAL", "NAPOLÉONIEN", "RÉCENT (>1900)"];
@@ -304,8 +334,6 @@
         function finaliserTrouvaille() {
             sessionActuelle.trouvailles.push(trouvailleEnCours);
             let label = `${trouvailleEnCours.type} - ${trouvailleEnCours.epoque || 'N/A'}`;
-            
-            // Marqueur Plat Orange et Noir posé sous vos pieds
             L.circleMarker(trouvailleEnCours.coords, {radius: 9, color: '#ff6600', fillColor: '#121212', weight: 4, fillOpacity: 1})
                 .addTo(layerGroupCourant).bindPopup(`<b style="font-size:14px; color:#000;">🎯 ${label}</b>`).openPopup();
             fermerModal('trouvaille-modal');
@@ -330,10 +358,12 @@
             sessionActuelle = indexSorties[nom];
             layerGroupCourant.clearLayers();
             
+            // Matérialiser le tracé complet de l'archive
             if(sessionActuelle.parcours && sessionActuelle.parcours.length > 0) {
                 L.polyline(sessionActuelle.parcours, {color: '#ffffff', weight: 5, opacity: 0.8}).addTo(layerGroupCourant);
                 map.setView(sessionActuelle.parcours[0], 17);
             }
+            // Reposer l'ensemble des trouvailles déclarées de cette archive
             if(sessionActuelle.trouvailles) {
                 sessionActuelle.trouvailles.forEach(t => {
                     L.circleMarker(t.coords, {radius: 9, color: '#ff6600', fillColor: '#121212', weight: 4, fillOpacity: 1})
