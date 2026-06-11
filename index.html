@@ -3,89 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Détect'Map Pro - IGN Edition</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <title>Détect'Map Pro V1.7</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <style>
-        /* Design Global Minimaliste Premium (Bichromie) */
-        body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #121212; color: #E0E0E0; overflow: hidden; }
+        /* Design Flat Bichrome Strict (Noir & Blanc/Accent) */
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #121212; color: #E0E0E0; overflow: hidden; }
         #map { height: 70%; width: 100%; background: #1a1a1a; }
         
-        /* Bandeaux de commandes Flat */
-        .panel { height: 8%; width: 100%; display: flex; background: #121212; box-sizing: border-box; padding: 4px; gap: 6px; }
-        .panel-bottom { height: 11%; background: #121212; border-top: 1px solid #2d2d2d; }
-        .panel-slider { height: 5%; background: #1e1e1e; display: flex; align-items: center; justify-content: center; padding: 0 15px; border-top: 1px solid #2d2d2d; }
+        /* Bandeaux de commande */
+        .panel { height: 10%; width: 100%; display: flex; background: #121212; box-sizing: border-box; padding: 6px; gap: 8px; border-top: 1px solid #2d2d2d; }
+        .panel-top { height: 8%; border-bottom: 1px solid #2d2d2d; border-top: none; }
+        .panel-bottom { height: 12%; }
         
-        /* Boutons */
-        .btn { flex: 1; border: none; border-radius: 8px; font-weight: 600; font-size: 13px; letter-spacing: 0.5px; color: #ffffff; background: #1e1e1e; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .btn svg { width: 20px; height: 20px; fill: currentColor; }
-        .btn-small { flex: 0.4; background: #121212; border: 1px solid #333; }
+        /* Boutons Flat Unifiés */
+        .btn { flex: 1; border: none; border-radius: 8px; font-weight: 600; font-size: 12px; letter-spacing: 0.5px; color: #ffffff; background: #1e1e1e; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border: 1px solid #333; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .btn svg { width: 20px; height: 20px; fill: #ffffff; }
+        .btn-small { flex: 0.4; }
         
-        /* Variantes Couleurs Flat */
-        .btn-accent-blue { background: #0055ff; }
-        .btn-accent-orange { background: #ff6600; }
-        .btn-accent-red { background: #cc0000; }
+        /* Accents */
+        .btn-blue { background: #0055ff; border: none; }
+        .btn-orange { background: #ff6600; border: none; }
+        .btn-red { background: #cc0000; border: none; }
         
-        .file-select { flex: 1.2; border-radius: 8px; background: #1e1e1e; color: #ffffff; font-size: 13px; font-weight: 600; padding: 0 5px; border: none; text-align-last: center; -webkit-appearance: none; }
+        .file-select { flex: 1.2; border-radius: 8px; background: #1e1e1e; color: #ffffff; font-size: 13px; font-weight: 600; padding: 0 5px; border: 1px solid #333; text-align-last: center; -webkit-appearance: none; }
         
-        /* Contrôle de transparence Flat (Grand format) */
-        .slider-container { width: 100%; display: flex; align-items: center; gap: 15px; }
-        .slider-label { font-size: 12px; font-weight: 600; color: #888; text-transform: uppercase; }
-        .modern-slider { flex: 1; -webkit-appearance: none; background: #333; height: 8px; border-radius: 4px; outline: none; }
-        .modern-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%; background: #0055ff; cursor: pointer; }
-        
-        /* Bouton Focus sur la carte */
-        .map-btn-focus { position: absolute; right: 16px; bottom: 32%; width: 56px; height: 56px; background: #ffffff; color: #121212; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; z-index: 1000; box-shadow: 0 4px 10px rgba(0,0,0,0.4); border: none; }
-        
-        /* Fenêtres de documentation et de saisie (Modals XXL) */
+        /* Bouton Cible/Focus sur la carte */
+        .map-btn-focus { position: absolute; right: 16px; bottom: 32%; width: 56px; height: 56px; background: #1e1e1e; border: 2px solid #ffffff; color: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 1000; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .map-btn-focus svg { width: 28px; height: 28px; fill: #ffffff; }
+
+        /* Panneau de contrôle des CALQUES (Flottant à gauche) */
+        .layers-control-panel { position: absolute; left: 12px; top: 10%; width: 240px; background: rgba(18, 18, 18, 0.9); border: 1px solid #333; border-radius: 8px; z-index: 1000; padding: 10px; display: flex; flex-direction: column; gap: 10px; max-height: 45%; overflow-y: auto; }
+        .layer-row { display: flex; flex-direction: column; gap: 4px; border-bottom: 1px solid #222; padding-bottom: 6px; }
+        .layer-header { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; }
+        .layer-header input[type="checkbox"] { width: 18px; height: 18px; accent-color: #0055ff; }
+        .layer-slider { -webkit-appearance: none; width: 100%; background: #333; height: 6px; border-radius: 3px; outline: none; margin-top: 4px; }
+        .layer-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #ffffff; cursor: pointer; }
+
+        /* Fenêtres Modals Épurées */
         .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(10,10,10,0.96); padding: 20px; box-sizing: border-box; }
-        .modal-content { background: #1e1e1e; border: 1px solid #333333; border-radius: 16px; height: 100%; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; overflow-y: auto; }
-        .modal-title { color: #ffffff; font-size: 20px; text-align: center; font-weight: 600; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .modal-body { flex-grow: 1; font-size: 16px; line-height: 1.6; color: #ccc; }
+        .modal-content { background: #1e1e1e; border: 1px solid #333; border-radius: 16px; height: 100%; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; }
+        .modal-title { color: #ffffff; font-size: 18px; text-align: center; font-weight: 600; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .modal-body { flex-grow: 1; font-size: 15px; line-height: 1.6; color: #ccc; overflow-y: auto; }
         .grid-options { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; flex-grow: 1; }
-        .giant-input { width: 100%; padding: 16px; font-size: 20px; border-radius: 8px; border: 1px solid #333333; background: #121212; color: #ffffff; box-sizing: border-box; margin-bottom: 24px; text-align: center; }
+        .giant-input { width: 100%; padding: 16px; font-size: 20px; border-radius: 8px; border: 1px solid #333; background: #121212; color: #ffffff; box-sizing: border-box; margin-bottom: 24px; text-align: center; }
     </style>
 </head>
 <body>
 
-    <div class="panel">
-        <button class="btn btn-small" onclick="ouvrirModal('modal-aide')">❔</button>
+    <div class="panel panel-top">
+        <button class="btn btn-small" onclick="ouvrirModal('modal-aide')">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 12 10 10-4.48 10-12S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/></svg>
+        </button>
         <select id="select-sorties" class="file-select" onchange="chargerSortieSelectionnee()">
-            <option value="">HISTORIQUE DES SORTIES</option>
+            <option value="">HISTORIQUE SORTIES</option>
         </select>
-        <button class="btn btn-small" onclick="exporterSortieActuelle()">📤</button>
-        <button class="btn btn-small" onclick="document.getElementById('input-import').click()">📥</button>
-        <button class="btn btn-small" onclick="ouvrirModal('modal-cloche')">🔔</button>
+        <button class="btn btn-small" onclick="exporterSortieActuelle()">
+            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        </button>
+        <button class="btn btn-small" onclick="document.getElementById('input-import').click()">
+            <svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg>
+        </button>
+        <button class="btn btn-small" onclick="ouvrirModal('modal-cloche')">
+            <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1-1.5-1s-1.5.17-1.5 1v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+        </button>
         <input type="file" id="input-import" style="display:none;" accept=".json" onchange="importerFichierSortie(event)">
     </div>
 
     <div id="map"></div>
-    <button class="map-btn-focus" onclick="centrerSurMoi()">🎯</button>
+    
+    <button class="map-btn-focus" onclick="centrerSurMoi()">
+        <svg viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm10 3h-2.03c-.45-4.43-3.95-7.93-8.38-8.38V1c0-.55-.45-1-1-1s-1 .45-1 1v1.62C6.16 3.07 2.66 6.57 2.21 11H1c-.55 0-1 .45-1 1s.45 1 1 1h1.21c.45 4.43 3.95 7.93 8.38 8.38V23c0 .55.45 1 1 1s1-.45 1-1v-1.62c4.43-.45 7.93-3.95 8.38-8.38H22c0-.55.45-1 1-1s-.45-1-1-1zm-10 9c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg>
+    </button>
 
-    <div class="panel-slider">
-        <div class="slider-container">
-            <span class="slider-label">Aujourd'hui</span>
-            <input type="range" min="0" max="100" value="0" class="modern-slider" id="transparency-slider" oninput="ajusterOpacite(this.value)">
-            <span class="slider-label" id="slider-layer-name">Histoire</span>
+    <div class="layers-control-panel">
+        <div style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: #888; border-bottom: 1px solid #333; padding-bottom: 4px;">Gestion des Cartes</div>
+        
+        <div class="layer-row">
+            <label class="layer-header">
+                <input type="checkbox" id="chk-sat" checked onchange="toggleCalque('sat')"> Vue Satellite
+            </label>
+        </div>
+        <div class="layer-row">
+            <label class="layer-header">
+                <input type="checkbox" id="chk-lidar" onchange="toggleCalque('lidar')"> 1. LIDAR (Slopes)
+            </label>
+            <input type="range" min="0" max="100" value="100" class="layer-slider" id="sld-lidar" oninput="changerOpaciteCalque('lidar', this.value)">
+        </div>
+        <div class="layer-row">
+            <label class="layer-header">
+                <input type="checkbox" id="chk-sec" onchange="toggleCalque('sec')"> 2. SÉCHERESSE 2003
+            </label>
+            <input type="range" min="0" max="100" value="100" class="layer-slider" id="sld-sec" oninput="changerOpaciteCalque('sec', this.value)">
+        </div>
+        <div class="layer-row">
+            <label class="layer-header">
+                <input type="checkbox" id="chk-p1950" onchange="toggleCalque('p1950')"> 3. PHOTOS 1950
+            </label>
+            <input type="range" min="0" max="100" value="100" class="layer-slider" id="sld-p1950" oninput="changerOpaciteCalque('p1950', this.value)">
+        </div>
+        <div class="layer-row">
+            <label class="layer-header">
+                <input type="checkbox" id="chk-em" onchange="toggleCalque('em')"> 4. ÉTAT-MAJOR (XIXe)
+            </label>
+            <input type="range" min="0" max="100" value="100" class="layer-slider" id="sld-em" oninput="changerOpaciteCalque('em', this.value)">
         </div>
     </div>
 
     <div class="panel">
-        <button id="btn-park" class="btn" onclick="marquerParking()">
-            <svg viewBox="0 0 24 24"><path d="M18.92 11.01C18.72 10.42 18.16 10 17.5 10H6.5c-.66 0-1.22.42-1.42 1.01L3 17v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 12h10.29l1.04 3H5.81l1.04-3zM19 21H5v-4h14v4z"/></svg>VÉHICULE
+        <button id="btn-park" class="btn btn-border" onclick="marquerParking()">
+            <svg viewBox="0 0 24 24"><path d="M18.92 11.01C18.72 10.42 18.16 10 17.5 10H6.5c-.66 0-1.22.42-1.42 1.01L3 17v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 12h10.29l1.04 3H5.81l1.04-3zM19 21H5v-4h14v4z"/></svg>MARQUER VÉHICULE
         </button>
-        <button id="btn-zone" class="btn" onclick="creerZoneInteret()">
-            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 12 10 10-4.48 10-12S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg>ZONE FOCUS
-        </button>
-        <select id="select-carte-historique" class="file-select" style="flex:1;" onchange="changerCoucheHistorique(this.value)">
-            <option value="none">⏱️ CHOIX DU TEMPS</option>
-            <option value="lidar">1. LIDAR (SOL NU)</option>
-            <option value="sec2003">2. SÉCHERESSE 2003</option>
-            <option value="photos1950">3. PHOTOS 1950</option>
-            <option value="etatmajor">4. ÉTAT-MAJOR (XIXe)</option>
-            <option value="cassini">5. CASSINI (XVIIIe)</option>
-        </select>
     </div>
 
     <div class="panel panel-bottom">
@@ -99,101 +129,110 @@
 
     <div id="modal-aide" class="modal">
         <div class="modal-content">
-            <div class="modal-title">Guide Utilisateur (Terrain)</div>
+            <div class="modal-title">Guide Terrain</div>
             <div class="modal-body">
-                <p><b>1. À la Voiture :</b> Dès votre arrivée au stationnement, cliquez sur <b>VÉHICULE</b>. Votre point de retour est sécurisé.</p>
-                <p><b>2. Économie de Batterie :</b> Vous pouvez maintenant basculer votre iPhone en <b>Mode Avion</b>. Le GPS restera actif et fonctionnera hors-ligne.</p>
-                <p><b>3. Lancer la marche :</b> Cliquez sur <b>PROSPECTION</b>. Rangez le téléphone. Votre parcours se dessine automatiquement en arrière-plan tous les 5 mètres.</p>
-                <p><b>4. Analyse Sécheresse/Lidar :</b> Sélectionnez une carte dans le menu <i>Choix du temps</i>, puis glissez le curseur horizontal pour ajuster la transparence.</p>
+                <p><b>• Voiture :</b> Pressez "MARQUER VÉHICULE" à l'arrêt.</p>
+                <p><b>• Suivi :</b> "PROSPECTION" lance le tracé blanc en tâche de fond (tous les 5m).</p>
+                <p><b>• Mode Calques :</b> Cochez plusieurs cartes à gauche. Faites glisser leurs curseurs pour mixer le LIDAR et la Sécheresse 2003.</p>
+                <p><b>• Cible :</b> Cliquez sur "CIBLE LOCALISÉE" juste au-dessus du trou pour fixer l'objet.</p>
             </div>
-            <button class="btn" style="max-height: 50px; background:#333;" onclick="fermerModal('modal-aide')">FERMER</button>
+            <button class="btn" style="max-height: 45px; background:#333;" onclick="fermerModal('modal-aide')">FERMER</button>
         </div>
     </div>
 
     <div id="modal-cloche" class="modal">
         <div class="modal-content">
-            <div class="modal-title">Release Notes & Versionning</div>
+            <div class="modal-title">Notes de Version</div>
             <div class="modal-body">
-                <p><b>Version 1.6 (Actuelle) :</b><br>• Intégration des flux officiels cartes.gouv.fr (IGN).<br>• Ajout de la couche historique 2000-2005 (Sécheresse 2003).<br>• Gestion de la superposition et curseur d'opacité fluide.<br>• Bouton de recentrage direct sur la carte.</p>
-                <p><b>Version 1.1 à 1.3 :</b><br>• Sécurisation HTTPS pour iPhone 17 Pro Max.<br>• Souveraineté totale : Import/Export de fichiers .json locaux.<br>• Design Flat Bichrome pour lisibilité basse vision.</p>
+                <p><b>V1.7 (Correctif Critique) :</b><br>
+                • Résolution complète du bug d'exécution JavaScript.<br>
+                • Intégration du système multi-calques avec curseurs d'opacité autonomes.<br>
+                • Correction des boutons Véhicule, Focus et Cible Localisée.<br>
+                • Intégration de la chronologie : Gaulois ➡️ Après 1900.</p>
             </div>
-            <button class="btn" style="max-height: 50px; background:#333;" onclick="fermerModal('modal-cloche')">FERMER</button>
+            <button class="btn" style="max-height: 45px; background:#333;" onclick="fermerModal('modal-cloche')">FERMER</button>
         </div>
     </div>
 
     <div id="trouvaille-modal" class="modal">
         <div class="modal-content">
-            <div id="modal-step-title" class="modal-title">Nature du signal</div>
+            <div id="modal-step-title" class="modal-title">NATURE</div>
             <div id="options-container" class="grid-options"></div>
-            <button class="btn" style="max-height: 50px; background:#333; margin-top:10px;" onclick="fermerModal('trouvaille-modal')">ANNULER</button>
+            <button class="btn" style="max-height: 45px; background:#333; margin-top:10px;" onclick="fermerModal('trouvaille-modal')">ANNULER</button>
         </div>
     </div>
 
     <div id="nom-modal" class="modal">
         <div class="modal-content" style="height: auto; top: 25%;">
-            <div class="modal-title">Enregistrer la session</div>
+            <div class="modal-title">Nommer la session</div>
             <input type="text" id="input-nom-sortie" class="giant-input">
-            <button class="btn btn-accent-green" style="height: 60px;" onclick="validerFinEtEnregistrer()">ARCHIVER LA SORTIE</button>
+            <button class="btn btn-accent-blue" style="height: 55px;" onclick="validerFinEtEnregistrer()">ARCHIVER</button>
         </div>
     </div>
 
     <script>
+        // Déclaration explicite globale pour Leaflet
         let map, userMarker, parkingMarker, currentPolyline, watchId;
         let tracking = false;
         let temporaryCoords = null;
-        let currentHistLayer = null;
         
         let sessionActuelle = { nom: "Sortie Active", parcours: [], trouvailles: [], zones: [], parking: null };
         let indexSorties = JSON.parse(localStorage.getItem('detectMapIndex')) || {};
-
-        // COUCHES DE BASE (D'aujourd'hui)
-        const fondSatellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}');
         let layerGroupCourant = L.layerGroup();
 
-        // REPERTOIRE DES COUCHES HISTORIQUES (Flux Officiels Géoportail / IGN / cartes.gouv.fr)
-        const couchesHistoriques = {
-            lidar: L.tileLayer('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ELEVATION.SLOPES&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/jpeg', { opacity: 0 }),
-            sec2003: L.tileLayer('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTHOIMAGERY.ORTHOPHOTOS.2000-2005&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/jpeg', { opacity: 0 }),
-            photos1950: L.tileLayer('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTHOIMAGERY.ORTHOPHOTOS.1950-1965&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/jpeg', { opacity: 0 }),
-            etatmajor: L.tileLayer('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.ETATMAJOR40&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/jpeg', { opacity: 0 }),
-            cassini: L.tileLayer('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.CASSINI&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/jpeg', { opacity: 0 })
+        // Initialisation des calques IGN officiels (Cartes.gouv.fr)
+        const calques = {
+            sat: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'),
+            lidar: L.tileLayer('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ELEVATION.SLOPES&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/jpeg'),
+            sec: L.tileLayer('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTHOIMAGERY.ORTHOPHOTOS.2000-2005&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/jpeg'),
+            p1950: L.tileLayer('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTHOIMAGERY.ORTHOPHOTOS.1950-1965&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/jpeg'),
+            em: L.tileLayer('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.ETATMAJOR40&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/jpeg')
         };
 
         window.onload = function() {
+            // Création rigoureuse de la carte
             map = L.map('map', { zoomControl: false, maxZoom: 19 }).setView([46.2276, 2.2137], 6);
-            fondSatellite.addTo(map);
+            calques.sat.addTo(map); // Satellite toujours en fond
             layerGroupCourant.addTo(map);
             actualiserListeDeroulante();
             
+            // DÉMARRAGE : Géolocalisation forcée immédiate avec focus
             if(navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(position => {
                     const pos = [position.coords.latitude, position.coords.longitude];
-                    map.setView(pos, 16);
-                    userMarker = L.circleMarker(pos, { radius: 7, color: '#0055ff', fillColor: '#fff', fillOpacity: 1, weight: 3 }).addTo(map);
-                }, null, { enableHighAccuracy: true });
+                    map.setView(pos, 17); // Focus direct gros plan
+                    userMarker = L.circleMarker(pos, { radius: 8, color: '#0055ff', fillColor: '#fff', fillOpacity: 1, weight: 3 }).addTo(map);
+                }, function() {
+                    alert("Activez le GPS dans les réglages de votre iPhone.");
+                }, { enableHighAccuracy: true });
             }
         };
 
-        function changerCoucheHistorique(layerKey) {
-            if(currentHistLayer) { map.removeLayer(currentHistLayer); currentHistLayer = null; }
-            if(layerKey === "none") { document.getElementById('transparency-slider').value = 0; return; }
-            
-            currentHistLayer = couchesHistoriques[layerKey];
-            currentHistLayer.addTo(map);
-            
-            let sliderValue = document.getElementById('transparency-slider').value;
-            currentHistLayer.setOpacity(sliderValue / 100);
-            document.getElementById('slider-layer-name').innerText = layerKey.toUpperCase();
+        // GESTION MULTI-CALQUES (SANDWICHE)
+        function toggleCalque(id) {
+            const checkbox = document.getElementById('chk-' + id);
+            if (checkbox.checked) {
+                calques[id].addTo(map);
+                // Si la carte a un slider, lui appliquer sa valeur d'opacité
+                const slider = document.getElementById('sld-' + id);
+                if(slider) calques[id].setOpacity(slider.value / 100);
+            } else {
+                map.removeLayer(calques[id]);
+            }
         }
 
-        function ajusterOpacite(valeur) {
-            if(currentHistLayer) { currentHistLayer.setOpacity(valeur / 100); }
+        function changerOpaciteCalque(id, valeur) {
+            if (map.hasLayer(calques[id])) {
+                calques[id].setOpacity(valeur / 100);
+            }
         }
 
         function centrerSurMoi() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(pos => {
-                    map.setView([pos.coords.latitude, pos.coords.longitude], 17);
+                    const coords = [pos.coords.latitude, pos.coords.longitude];
+                    map.setView(coords, 18);
+                    if(userMarker) userMarker.setLatLng(coords);
                 }, null, { enableHighAccuracy: true });
             }
         }
@@ -207,14 +246,14 @@
                 sessionActuelle = { nom: "", parcours: [], trouvailles: [], zones: [], parking: sessionActuelle.parking };
                 layerGroupCourant.clearLayers();
                 
-                currentPolyline = L.polyline([], {color: '#ffffff', weight: 5, opacity: 0.9}).addTo(layerGroupCourant);
+                currentPolyline = L.polyline([], {color: '#ffffff', weight: 6, opacity: 0.9}).addTo(layerGroupCourant);
                 
                 watchId = navigator.geolocation.watchPosition(pos => {
                     const coords = [pos.coords.latitude, pos.coords.longitude];
                     sessionActuelle.parcours.push(coords);
                     currentPolyline.setLatLngs(sessionActuelle.parcours);
                     if(userMarker) userMarker.setLatLng(coords);
-                }, error => {}, { enableHighAccuracy: true, distanceFilter: 5 });
+                }, null, { enableHighAccuracy: true, distanceFilter: 5 });
             } else {
                 document.getElementById('nom-modal').style.display = 'block';
                 let date = new Date();
@@ -243,21 +282,15 @@
                 const coords = [pos.coords.latitude, pos.coords.longitude];
                 sessionActuelle.parking = coords;
                 if(parkingMarker) layerGroupCourant.removeLayer(parkingMarker);
-                parkingMarker = L.circleMarker(coords, { radius: 10, color: '#0055ff', fillColor: '#121212', weight: 4, fillOpacity: 1 }).addTo(layerGroupCourant).bindPopup('<b>🚗 VÉHICULE</b>');
-            });
+                parkingMarker = L.circleMarker(coords, { radius: 10, color: '#0055ff', fillColor: '#121212', weight: 4, fillOpacity: 1 }).addTo(layerGroupCourant);
+                parkingMarker.bindPopup('<b style="color:#000;">🚗 VÉHICULE</b>').openPopup();
+            }, null, { enableHighAccuracy: true });
         }
 
-        function creerZoneInteret() {
-            navigator.geolocation.getCurrentPosition(pos => {
-                const coords = [pos.coords.latitude, pos.coords.longitude];
-                sessionActuelle.zones.push(coords);
-                L.circle(coords, { radius: 25, color: '#ff6600', weight: 2, fillColor: '#ff6600', fillOpacity: 0.15 }).addTo(layerGroupCourant);
-            });
-        }
-
+        // QUALIFICATION DE LA TROUVAILLE
         let trouvailleEnCours = {};
-        const categories = [{ name: "MONNAIE", color: "#1e1e1e" }, { name: "ARTEFACT / OBJET", color: "#1e1e1e" }, { name: "MILITARIA", color: "#1e1e1e" }, { name: "DÉCHET", color: "#1e1e1e" }];
-        const epoques = ["GAULOIS", "ROMAIN", "ROYAL", "MODERNE", "NON IDENTIFIÉ"];
+        const categories = [{ name: "MONNAIE" }, { name: "ARTEFACT / OBJET" }, { name: "MILITARIA" }, { name: "DÉCHET" }];
+        const epoques = ["GAULOIS", "ROMAIN", "MÉDIÉVAL", "ROYAL", "NAPOLÉONIEN", "RÉCENT (>1900)"];
 
         function ouvrirMenuTrouvaille() {
             navigator.geolocation.getCurrentPosition(pos => {
@@ -265,7 +298,7 @@
                 trouvailleEnCours = { coords: temporaryCoords, type: '', epoque: '' };
                 ouvrirModal('trouvaille-modal');
                 afficherEtapeCategorie();
-            });
+            }, null, { enableHighAccuracy: true });
         }
 
         function afficherEtapeCategorie() {
@@ -275,7 +308,7 @@
             categories.forEach(cat => {
                 let b = document.createElement('button');
                 b.className = "btn-opt btn";
-                b.style.background = cat.color; b.style.border = "1px solid #444"; b.innerText = cat.name;
+                b.innerText = cat.name;
                 b.onclick = () => { trouvailleEnCours.type = cat.name; afficherEtapeEpoque(); };
                 container.appendChild(b);
             });
@@ -289,7 +322,7 @@
             epoques.forEach(ep => {
                 let b = document.createElement('button');
                 b.className = "btn-opt btn";
-                b.style.background = "#1e1e1e"; b.style.border = "1px solid #444"; b.innerText = ep;
+                b.innerText = ep;
                 b.onclick = () => { trouvailleEnCours.epoque = ep; finaliserTrouvaille(); };
                 container.appendChild(b);
             });
@@ -298,8 +331,10 @@
         function finaliserTrouvaille() {
             sessionActuelle.trouvailles.push(trouvailleEnCours);
             let label = `${trouvailleEnCours.type} - ${trouvailleEnCours.epoque || 'N/A'}`;
+            
+            // Marqueur Flat Orange et Noir au point exact
             L.circleMarker(trouvailleEnCours.coords, {radius: 9, color: '#ff6600', fillColor: '#121212', weight: 4, fillOpacity: 1})
-                .addTo(layerGroupCourant).bindPopup(`<b style="font-size:14px; color:#000;">${label}</b>`);
+                .addTo(layerGroupCourant).bindPopup(`<b style="font-size:14px; color:#000;">🎯 ${label}</b>`);
             fermerModal('trouvaille-modal');
         }
 
@@ -329,12 +364,9 @@
             if(sessionActuelle.parking) {
                 parkingMarker = L.circleMarker(sessionActuelle.parking, { radius: 10, color: '#0055ff', fillColor: '#121212', weight: 4, fillOpacity: 1 }).addTo(layerGroupCourant);
             }
-            sessionActuelle.zones.forEach(coords => {
-                L.circle(coords, { radius: 25, color: '#ff6600', weight: 2, fillColor: '#ff6600', fillOpacity: 0.15 }).addTo(layerGroupCourant);
-            });
             sessionActuelle.trouvailles.forEach(t => {
                 L.circleMarker(t.coords, {radius: 9, color: '#ff6600', fillColor: '#121212', weight: 4, fillOpacity: 1})
-                    .addTo(layerGroupCourant).bindPopup(`<b>${t.type}<br>${t.epoque}</b>`);
+                    .addTo(layerGroupCourant).bindPopup(`<b style="color:#000;">${t.type}<br>${t.epoque}</b>`);
             });
         }
 
